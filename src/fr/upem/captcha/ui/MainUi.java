@@ -1,3 +1,8 @@
+/*
+ *  AUTHORS : NASR DAVID, OEUVRAY JORIS
+ *  Description : Gestion et affichage de la fenêtre
+ */
+
 package fr.upem.captcha.ui;
 
 import java.awt.Color;
