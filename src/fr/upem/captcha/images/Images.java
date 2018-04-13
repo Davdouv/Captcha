@@ -12,12 +12,20 @@ import java.net.URL;
 import java.util.List;
 
 public interface Images {
-	public List<URL> getPhotos();
+	public static List<URL> getPhotos() {
+		return null;
+	}
 	
-	public List<URL> getRandomPhotosURL(int value);
+	public static List<URL> getRandomPhotosURL(int value) {
+		return null;
+	}
 	
-	public URL getRandomPhotoURL();
+	public static URL getRandomPhotoURL() {
+		return null;
+	}
 	
-	public boolean isPhotoCorrect(URL url);
+	public static boolean isPhotoCorrect(URL url) {
+		return false;
+	}
 
 }
