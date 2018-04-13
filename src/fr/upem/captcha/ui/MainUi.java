@@ -32,15 +32,15 @@ public class MainUi {
 		
 		GridLayout layout = createLayout();  // Création d'un layout de type Grille avec 4 lignes et 3 colonnes
 		
-		frame.setLayout(layout);  // affection du layout dans la fenêtre.
-		frame.setSize(width, height); // définition de la taille
+		frame.setLayout(layout);  // Affection du layout dans la fenêtre.
+		frame.setSize(width, height); // Définition de la taille
 		frame.setResizable(false);  // On définit la fenêtre comme non redimentionnable
 		
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); // Lorsque l'on ferme la fenêtre on quitte le programme.
 		 
 		JButton okButton = createOkButton();
 		
-		frame.add(createLabelImage("centre ville.jpg")); //ajouter des composants à la fenêtre
+		frame.add(createLabelImage("centre ville.jpg")); // Ajouter des composants à la fenêtre
 		frame.add(createLabelImage("le havre.jpg"));
 		frame.add(createLabelImage("panneau 70.jpg"));
 		frame.add(createLabelImage("panneaubleu-carre.jpeg"));
@@ -66,11 +66,11 @@ public class MainUi {
 	}
 	
 	private static JButton createOkButton(){
-		return new JButton(new AbstractAction("Vérifier") { //ajouter l'action du bouton
+		return new JButton(new AbstractAction("Vérifier") { // Ajouter l'action du bouton
 			
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				EventQueue.invokeLater(new Runnable() { // faire des choses dans l'interface donc appeler cela dans la queue des �v�nements
+				EventQueue.invokeLater(new Runnable() { // Faire des choses dans l'interface donc appeler cela dans la queue des �v�nements
 					
 					@Override
 					public void run() { // c'est un runnable
@@ -83,16 +83,16 @@ public class MainUi {
 	
 	private static JLabel createLabelImage(String imageLocation) throws IOException{
 		
-		final URL url = MainUi.class.getResource(imageLocation); //Aller chercher les images !! IMPORTANT 
+		final URL url = MainUi.class.getResource(imageLocation); // Aller chercher les images !! IMPORTANT 
 		
 		System.out.println(url); 
 		
-		BufferedImage img = ImageIO.read(url); //lire l'image
-		Image sImage = img.getScaledInstance(width/3,height/4, Image.SCALE_SMOOTH); //redimentionner l'image
+		BufferedImage img = ImageIO.read(url); // Lire l'image
+		Image sImage = img.getScaledInstance(width/3,height/4, Image.SCALE_SMOOTH); // Redimensionner l'image
 		
-		final JLabel label = new JLabel(new ImageIcon(sImage)); // créer le composant pour ajouter l'image dans la fen�tre
+		final JLabel label = new JLabel(new ImageIcon(sImage)); // Créer le composant pour ajouter l'image dans la fen�tre
 		
-		label.addMouseListener(new MouseListener() { //Ajouter le listener d'évenement de souris
+		label.addMouseListener(new MouseListener() { // Ajouter le listener d'évenement de souris
 			private boolean isSelected = false;
 			
 			
@@ -116,7 +116,7 @@ public class MainUi {
 			}
 			
 			@Override
-			public void mouseClicked(MouseEvent arg0) { //ce qui nous intéresse c'est lorsqu'on clique sur une image, il y a donc des choses � faire ici
+			public void mouseClicked(MouseEvent arg0) { // Ce qui nous intéresse c'est lorsqu'on clique sur une image, il y a donc des choses � faire ici
 				EventQueue.invokeLater(new Runnable() { 
 					
 					@Override
