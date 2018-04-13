@@ -3,7 +3,6 @@
  * @date : 13 avr. 2018
  * @file : MainUI.java
  * @package : fr.upem.captcha.ui
- * @description : Gestion et affichage de la fenêtre
  */
 
 package fr.upem.captcha.ui;
@@ -29,6 +28,9 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JTextArea;
 
+/**
+ * MainUi est une classe qui permet la gestion et l'affichage de la fen�tre
+ */
 public class MainUi {
 	
 	private static ArrayList<URL> selectedImages = new ArrayList<URL>();
@@ -57,8 +59,6 @@ public class MainUi {
 		frame.add(createLabelImage("tour eiffel.jpg"));
 		frame.add(createLabelImage("ville espace verts.jpg"));
 		frame.add(createLabelImage("voie pieton.jpg"));
-		
-		
 		
 		frame.add(new JTextArea("Cliquez n'importe où ... juste pour tester l'interface !"));
 		
