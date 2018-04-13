@@ -1,6 +1,9 @@
-/*
- *  AUTHORS : NASR DAVID, OEUVRAY JORIS
- *  Description : Gestion et affichage de la fenêtre
+/**
+ * @authors : David NASR - Joris OEUVRAY
+ * @date : 13 avr. 2018
+ * @file : MainUI.java
+ * @package : fr.upem.captcha.ui
+ * @description : Gestion et affichage de la fenêtre
  */
 
 package fr.upem.captcha.ui;
