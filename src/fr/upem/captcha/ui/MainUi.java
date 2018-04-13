@@ -28,21 +28,19 @@ public class MainUi {
 	private final static int height = 768;
 	
 	public static void main(String[] args) throws IOException {
-		JFrame frame = new JFrame("Captcha"); // Création de la fenêtre principale
+		JFrame frame = new JFrame("Captcha"); // CrÃ©ation de la fenÃªtre principale
 		
-		GridLayout layout = createLayout();  // Création d'un layout de type Grille avec 4 lignes et 3 colonnes
+		GridLayout layout = createLayout();  // CrÃ©ation d'un layout de type Grille avec 4 lignes et 3 colonnes
 		
-		frame.setLayout(layout);  // affection du layout dans la fenêtre.
-		frame.setSize(width, height); // définition de la taille
-		frame.setResizable(false);  // On définit la fenêtre comme non redimentionnable
+		frame.setLayout(layout);  // affection du layout dans la fenÃªtre.
+		frame.setSize(width, height); // dÃ©finition de la taille
+		frame.setResizable(false);  // On dÃ©finit la fenÃªtre comme non redimentionnable
 		
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); // Lorsque l'on ferme la fenêtre on quitte le programme.
+		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); // Lorsque l'on ferme la fenÃªtre on quitte le programme.
 		 
-		
 		JButton okButton = createOkButton();
-
 		
-		frame.add(createLabelImage("centre ville.jpg")); //ajouter des composants à la fenêtre
+		frame.add(createLabelImage("centre ville.jpg")); //ajouter des composants Ã  la fenÃªtre
 		frame.add(createLabelImage("le havre.jpg"));
 		frame.add(createLabelImage("panneau 70.jpg"));
 		frame.add(createLabelImage("panneaubleu-carre.jpeg"));
@@ -54,7 +52,7 @@ public class MainUi {
 		
 		
 		
-		frame.add(new JTextArea("Cliquez n'importe où ... juste pour tester l'interface !"));
+		frame.add(new JTextArea("Cliquez n'importe oÃ¹ ... juste pour tester l'interface !"));
 		
 		
 		frame.add(okButton);
@@ -68,15 +66,15 @@ public class MainUi {
 	}
 	
 	private static JButton createOkButton(){
-		return new JButton(new AbstractAction("Vérifier") { //ajouter l'action du bouton
+		return new JButton(new AbstractAction("VÃ©rifier") { //ajouter l'action du bouton
 			
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				EventQueue.invokeLater(new Runnable() { // faire des choses dans l'interface donc appeler cela dans la queue des événements
+				EventQueue.invokeLater(new Runnable() { // faire des choses dans l'interface donc appeler cela dans la queue des ï¿½vï¿½nements
 					
 					@Override
 					public void run() { // c'est un runnable
-						System.out.println("J'ai cliqué sur Ok");
+						System.out.println("J'ai cliquÃ© sur Ok");
 					}
 				});
 			}
@@ -92,9 +90,9 @@ public class MainUi {
 		BufferedImage img = ImageIO.read(url); //lire l'image
 		Image sImage = img.getScaledInstance(width/3,height/4, Image.SCALE_SMOOTH); //redimentionner l'image
 		
-		final JLabel label = new JLabel(new ImageIcon(sImage)); // créer le composant pour ajouter l'image dans la fenêtre
+		final JLabel label = new JLabel(new ImageIcon(sImage)); // crÃ©er le composant pour ajouter l'image dans la fenï¿½tre
 		
-		label.addMouseListener(new MouseListener() { //Ajouter le listener d'évenement de souris
+		label.addMouseListener(new MouseListener() { //Ajouter le listener d'Ã©venement de souris
 			private boolean isSelected = false;
 			
 			
@@ -118,7 +116,7 @@ public class MainUi {
 			}
 			
 			@Override
-			public void mouseClicked(MouseEvent arg0) { //ce qui nous intéresse c'est lorsqu'on clique sur une image, il y a donc des choses à faire ici
+			public void mouseClicked(MouseEvent arg0) { //ce qui nous intÃ©resse c'est lorsqu'on clique sur une image, il y a donc des choses ï¿½ faire ici
 				EventQueue.invokeLater(new Runnable() { 
 					
 					@Override
