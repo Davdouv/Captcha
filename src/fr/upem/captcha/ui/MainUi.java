@@ -16,8 +16,13 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.lang.reflect.Constructor;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+import java.util.Random;
 
 import javax.imageio.ImageIO;
 import javax.swing.AbstractAction;
@@ -28,16 +33,20 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JTextArea;
 
+import fr.upem.captcha.images.Images;
+import fr.upem.captcha.images.boisson.Boisson;
+import fr.upem.captcha.images.poulet.Poulet;
+
 /**
  * MainUi est une classe qui permet la gestion et l'affichage de la fenêtre
  */
 public class MainUi {
 	
 	private static ArrayList<URL> selectedImages = new ArrayList<URL>();
-	private final static int width = 1024;
-	private final static int height = 768;
+	private final static int width = 800;
+	private final static int height = 600;
 	
-	public static void main(String[] args) throws IOException {
+	public static void main(String[] args) throws IOException, ClassNotFoundException, InstantiationException, IllegalAccessException {
 		JFrame frame = new JFrame("Captcha"); // CrÃ©ation de la fenÃªtre principale
 		
 		GridLayout layout = createLayout();  // CrÃ©ation d'un layout de type Grille avec 4 lignes et 3 colonnes
@@ -50,6 +59,7 @@ public class MainUi {
 		 
 		JButton okButton = createOkButton();
 		
+		/*
 		frame.add(createLabelImage("centre ville.jpg")); // Ajouter des composants Ã  la fenÃªtre
 		frame.add(createLabelImage("le havre.jpg"));
 		frame.add(createLabelImage("panneau 70.jpg"));
@@ -59,16 +69,36 @@ public class MainUi {
 		frame.add(createLabelImage("tour eiffel.jpg"));
 		frame.add(createLabelImage("ville espace verts.jpg"));
 		frame.add(createLabelImage("voie pieton.jpg"));
+		*/
 		
-		frame.add(new JTextArea("Cliquez n'importe oÃ¹ ... juste pour tester l'interface !"));
+		ArrayList<Images> categories = getCategories();
+		
+		Images category = getRandomCategory(categories);	// Récupére une catégorie au hasard
+		
+		Random randomGenerator = new Random();
+		int randomNumber = randomGenerator.nextInt(4)+1;	// Renvoie un nombre entre 1 et 4
+		List<URL> correctImages = category.getRandomPhotosURL(randomNumber);	// Renvoie un nombre aléatoire d'images de la catégorie
+		
+		List<URL> wrongImages = getOtherCategoryPhotos(categories, category, randomNumber);
+		
+		ArrayList<URL> imagesList = new ArrayList<URL>();
+		imagesList.addAll(correctImages);
+		imagesList.addAll(wrongImages);
+		Collections.shuffle(imagesList);
+
+		for(int i = 0; i < 9; i++) {
+			System.out.println(imagesList.get(i).toString());
+			frame.add(createLabelImage(imagesList.get(i)));
+		}
+		
+		frame.add(new JTextArea("Cliquez sur les images de " + category.getClass().getSimpleName()));
 		
 		
 		frame.add(okButton);
 		
 		frame.setVisible(true);
 	}
-	
-	
+
 	private static GridLayout createLayout(){
 		return new GridLayout(4,3);
 	}
@@ -89,11 +119,12 @@ public class MainUi {
 		});
 	}
 	
-	private static JLabel createLabelImage(String imageLocation) throws IOException{
+	private static JLabel createLabelImage(URL imageLocation) throws IOException{
 		
-		final URL url = MainUi.class.getResource(imageLocation); // Aller chercher les images !! IMPORTANT 
+		//final URL url = MainUi.class.getResource(imageLocation); // Aller chercher les images !! IMPORTANT 
+		final URL url = imageLocation;
 		
-		System.out.println(url); 
+		//System.out.println(url); 
 		
 		BufferedImage img = ImageIO.read(url); // Lire l'image
 		Image sImage = img.getScaledInstance(width/3,height/4, Image.SCALE_SMOOTH); // Redimensionner l'image
@@ -147,5 +178,75 @@ public class MainUi {
 		});
 		
 		return label;
+	}
+	
+	/**
+	 * Retourne la liste des catégories existantes
+	 * 
+	 * @return ArrayList<Images> - La liste des classes existantes implémentant l'interface Images
+	 */
+	public static ArrayList<Images> getCategories() throws ClassNotFoundException, InstantiationException, IllegalAccessException {
+		ArrayList<Class<?>> classes = new ArrayList<Class<?>>(); 		// une liste de toutes nos classes
+		classes.add(Poulet.class);	// on rajoute manuellement toutes nos classes
+		classes.add(Boisson.class);
+		
+		ArrayList<Images> categories = new ArrayList<Images>();
+		for (Class clazz : classes) {
+			categories.add(instantiateImages(clazz));	// On instance chaque classe en objet de type Images qu'on rajoute dans notre liste
+		}
+		
+		return categories;
+	}
+
+	/**
+	 * Retourne une catégorie aléatoire
+	 * 
+	 * @param categories - La liste des categories existantes, à récupérer avec getCategories()
+	 * @return Images - Un objet de la catégorie qui implémente l'interface Images
+	 */
+	public static Images getRandomCategory(ArrayList<Images> categories) throws ClassNotFoundException, InstantiationException, IllegalAccessException {
+		Random randomGenerator = new Random();
+		Images category = categories.get(randomGenerator.nextInt(categories.size()));	// on choisit aléatoirement une classe dans la liste
+
+		return category;	// on renvoit la categorie
+	}
+	
+	/**
+	 * Retourne une catégorie aléatoire
+	 * 
+	 * @param category - Instancie un objet de type Images à partir de la class de category
+	 * @return Images - L'objet de type Images instancié
+	 */
+	public static Images instantiateImages(Class<?> category) throws ClassNotFoundException, InstantiationException, IllegalAccessException {
+		Class<?> cls = Class.forName(category.getTypeName());	// On récupére le type de la classe
+		Object clsInstance = cls.newInstance();	// On instancie un objet du type de la classe
+		return (Images)clsInstance;	// On le cast en Images pour pouvoir utiliser les méthodes de l'interface
+	}
+	
+	/**
+	 * Retourne une liste d'url d'images qui ne font pas partie de la bonne catégorie
+	 * 
+	 * @param 
+	 * 		categories - La liste de toutes les catégories
+	 * 		category - La bonne catégorie
+	 * 		randomNumber - Le nombre d'images correctes (on fera 9 - ce nombre pour connaitre combien d'images il nous manque)
+	 * @return List<URL> - La liste d'url des mauvaises images
+	 */
+	private static List<URL> getOtherCategoryPhotos(ArrayList<Images> categories, Images category, int randomNumber) {
+		categories.remove(category);	// on enléve la bonne catégorie de la liste
+		List<URL> wrongImages = new ArrayList<URL>();	// on va stocker toutes les images dans une liste
+		
+		Random randomGenerator = new Random();
+		for (int i = randomNumber; i < 10; i++) {
+			URL url;
+			do {
+				int rand = randomGenerator.nextInt(categories.size());	// On choisit une categorie aléatoire
+				url = categories.get(rand).getRandomPhotoURL();
+			} while (wrongImages.contains(url));	// on vérifie qu'on n'a pas déjà sélectionné cette image, sinon on en choisit une autre
+
+			wrongImages.add(url);	// On rajoute une photo aléatoire de cette catégorie
+		}
+		
+		return wrongImages;
 	}
 }
