@@ -33,6 +33,7 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JTextArea;
 
+import fr.upem.captacha.grid.Grid;
 import fr.upem.captcha.images.Images;
 import fr.upem.captcha.images.boisson.Boisson;
 import fr.upem.captcha.images.poulet.Poulet;
@@ -43,6 +44,9 @@ import fr.upem.captcha.images.poulet.Poulet;
 public class MainUi {
 	
 	private static ArrayList<URL> selectedImages = new ArrayList<URL>();
+	//private static Images correctCategory;
+	//private static List<URL> correctImages = new ArrayList<URL>();
+	private static Grid grid = new Grid();
 	private final static int width = 800;
 	private final static int height = 600;
 	
@@ -58,41 +62,12 @@ public class MainUi {
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); // Lorsque l'on ferme la fenÃªtre on quitte le programme.
 		 
 		JButton okButton = createOkButton();
-		
-		/*
-		frame.add(createLabelImage("centre ville.jpg")); // Ajouter des composants Ã  la fenÃªtre
-		frame.add(createLabelImage("le havre.jpg"));
-		frame.add(createLabelImage("panneau 70.jpg"));
-		frame.add(createLabelImage("panneaubleu-carre.jpeg"));
-		frame.add(createLabelImage("parking.jpg"));
-		frame.add(createLabelImage("route panneau.jpg"));
-		frame.add(createLabelImage("tour eiffel.jpg"));
-		frame.add(createLabelImage("ville espace verts.jpg"));
-		frame.add(createLabelImage("voie pieton.jpg"));
-		*/
-		
-		ArrayList<Images> categories = getCategories();
-		
-		Images category = getRandomCategory(categories);	// Récupére une catégorie au hasard
-		
-		Random randomGenerator = new Random();
-		int randomNumber = randomGenerator.nextInt(4)+1;	// Renvoie un nombre entre 1 et 4
-		List<URL> correctImages = category.getRandomPhotosURL(randomNumber);	// Renvoie un nombre aléatoire d'images de la catégorie
-		
-		List<URL> wrongImages = getOtherCategoryPhotos(categories, category, randomNumber);
-		
-		ArrayList<URL> imagesList = new ArrayList<URL>();
-		imagesList.addAll(correctImages);
-		imagesList.addAll(wrongImages);
-		Collections.shuffle(imagesList);
 
 		for(int i = 0; i < 9; i++) {
-			System.out.println(imagesList.get(i).toString());
-			frame.add(createLabelImage(imagesList.get(i)));
+			frame.add(createLabelImage(grid.getImages().get(i)));
 		}
 		
-		frame.add(new JTextArea("Cliquez sur les images de " + category.getClass().getSimpleName()));
-		
+		frame.add(new JTextArea("Cliquez sur les images de " + grid.getCategory().getClass().getSimpleName()));
 		
 		frame.add(okButton);
 		
@@ -112,7 +87,14 @@ public class MainUi {
 					
 					@Override
 					public void run() { // c'est un runnable
-						System.out.println("J'ai cliquÃ© sur Ok");
+						if (checkSelectedImages(grid.getCategory(), selectedImages, grid.getCorrectImages())) {
+							System.out.println("C'est correct !");
+						}
+						else {
+							System.out.println("Tu es démasqué robot !");
+							// Demandé ici -> Relancer un test plus compliqué que le 1er
+							// restart();
+						}
 					}
 				});
 			}
@@ -179,74 +161,42 @@ public class MainUi {
 		
 		return label;
 	}
-	
-	/**
-	 * Retourne la liste des catégories existantes
-	 * 
-	 * @return ArrayList<Images> - La liste des classes existantes implémentant l'interface Images
-	 */
-	public static ArrayList<Images> getCategories() throws ClassNotFoundException, InstantiationException, IllegalAccessException {
-		ArrayList<Class<?>> classes = new ArrayList<Class<?>>(); 		// une liste de toutes nos classes
-		classes.add(Poulet.class);	// on rajoute manuellement toutes nos classes
-		classes.add(Boisson.class);
 		
-		ArrayList<Images> categories = new ArrayList<Images>();
-		for (Class clazz : classes) {
-			categories.add(instantiateImages(clazz));	// On instance chaque classe en objet de type Images qu'on rajoute dans notre liste
-		}
-		
-		return categories;
-	}
-
 	/**
-	 * Retourne une catégorie aléatoire
-	 * 
-	 * @param categories - La liste des categories existantes, à récupérer avec getCategories()
-	 * @return Images - Un objet de la catégorie qui implémente l'interface Images
-	 */
-	public static Images getRandomCategory(ArrayList<Images> categories) throws ClassNotFoundException, InstantiationException, IllegalAccessException {
-		Random randomGenerator = new Random();
-		Images category = categories.get(randomGenerator.nextInt(categories.size()));	// on choisit aléatoirement une classe dans la liste
-
-		return category;	// on renvoit la categorie
-	}
-	
-	/**
-	 * Retourne une catégorie aléatoire
-	 * 
-	 * @param category - Instancie un objet de type Images à partir de la class de category
-	 * @return Images - L'objet de type Images instancié
-	 */
-	public static Images instantiateImages(Class<?> category) throws ClassNotFoundException, InstantiationException, IllegalAccessException {
-		Class<?> cls = Class.forName(category.getTypeName());	// On récupére le type de la classe
-		Object clsInstance = cls.newInstance();	// On instancie un objet du type de la classe
-		return (Images)clsInstance;	// On le cast en Images pour pouvoir utiliser les méthodes de l'interface
-	}
-	
-	/**
-	 * Retourne une liste d'url d'images qui ne font pas partie de la bonne catégorie
+	 * Vérifie si toutes les images correctes ont été sélectionnés (et seulement elles)
 	 * 
 	 * @param 
-	 * 		categories - La liste de toutes les catégories
 	 * 		category - La bonne catégorie
-	 * 		randomNumber - Le nombre d'images correctes (on fera 9 - ce nombre pour connaitre combien d'images il nous manque)
-	 * @return List<URL> - La liste d'url des mauvaises images
+	 * 		selectedImages - La liste des URL des images sélectionnées
+	 * 		correctImages - La liste des URL des images correctes
+	 * @return boolean - Retourne true si toutes les images sont correctes, sinon false
 	 */
-	private static List<URL> getOtherCategoryPhotos(ArrayList<Images> categories, Images category, int randomNumber) {
-		categories.remove(category);	// on enléve la bonne catégorie de la liste
-		List<URL> wrongImages = new ArrayList<URL>();	// on va stocker toutes les images dans une liste
-		
-		Random randomGenerator = new Random();
-		for (int i = randomNumber; i < 10; i++) {
-			URL url;
-			do {
-				int rand = randomGenerator.nextInt(categories.size());	// On choisit une categorie aléatoire
-				url = categories.get(rand).getRandomPhotoURL();
-			} while (wrongImages.contains(url));	// on vérifie qu'on n'a pas déjà sélectionné cette image, sinon on en choisit une autre
-
-			wrongImages.add(url);	// On rajoute une photo aléatoire de cette catégorie
+	private static boolean checkSelectedImages(Images category, ArrayList<URL> selectedImages, List<URL> correctImages) {
+		// D'abord on vérifie si la liste contient toutes les images correct
+		if (selectedImages.containsAll(correctImages)) {
+			System.out.println("OKAY");
+			// Ensuite on veut vérifier qu'il n'y ait pas de mauvaises images sélectionnées
+			for (URL imageURL : selectedImages) {
+				if(!category.isPhotoCorrect(imageURL)) return false;	// Si une seule image est fausse, alors le test est échoué
+			}
+			
+			return true;			
+		}
+		else {	// Si on n'a pas sélectionné toutes les images correctes, alors c'est forcément faux
+			return false;
 		}
 		
-		return wrongImages;
+		// Une autre méthode serait de parcourir toutes les images et d'utiliser la méthode isPhotoCorrect sur les images sélectionnées
+		// Ainsi, pas besoin de stocker les images correctes
+	}
+	
+	/**
+	 * Restart...
+	 * 
+	 */
+	private static void restart() {
+		selectedImages.clear();
+		//frame.removeAll();
+		grid.restart();
 	}
 }

@@ -15,14 +15,10 @@ import fr.upem.captcha.images.Images;
 
 import java.util.ArrayList;
 
+// Piste d'amélioration -> Trouver un moyen pour factoriser le code (Si Images était une classe abstraite ça aurait été cool...) car c'est le même dans chaque classe
 public class Poulet implements Images {
-
-	public static void main(String[] args) {
-		//Poulet poulet = new Poulet();
-		//System.out.println(poulet.getRandomPhotosURL(1));
-		//System.out.println(poulet.isPhotoCorrect(poulet.getRandomPhotoURL()));
-	}
 	
+	// Piste d'amélioration -> Trouver un moyen de récupérer tous les fichiers (.jpg, .png ...) du dossier et de ses sous-dossiers
 	@Override
 	public List<URL> getPhotos() {
 		List<URL> photos = new ArrayList<URL>();
