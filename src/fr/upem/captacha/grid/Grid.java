@@ -35,12 +35,12 @@ public class Grid {
 	public Grid() {
 		ArrayList<Images> categories = null;
 		try {
-			categories = getCategories();
+			categories = getCategories();	// On récupére les différentes classes
 		} catch (ClassNotFoundException | InstantiationException | IllegalAccessException e) {
 			e.printStackTrace();
 		}
 		try {
-			correctCategory = getRandomCategory(categories);
+			correctCategory = getRandomCategory(categories);	// On récupére une classe au hasard
 		} catch (ClassNotFoundException | InstantiationException | IllegalAccessException e) {
 			e.printStackTrace();
 		}
@@ -76,12 +76,19 @@ public class Grid {
 	 */
 	public static ArrayList<Images> getCategories() throws ClassNotFoundException, InstantiationException, IllegalAccessException {
 		ArrayList<Class<?>> classes = new ArrayList<Class<?>>(); 		// une liste de toutes nos classes
-		classes.add(Poulet.class);	// on rajoute manuellement toutes nos classes
-		classes.add(Boisson.class);
+		//classes.add(Poulet.class);	// on rajoute manuellement toutes nos classes
+		//classes.add(Boisson.class);		
+		
+		Class poulet = Class.forName("fr.upem.captcha.images.poulet.Poulet");
+		classes.add(poulet);
+		Class boisson = Class.forName("fr.upem.captcha.images.boisson.Boisson");
+		classes.add(boisson);
+
+		System.out.println(Images.class.getDeclaredClasses().length);
 		
 		ArrayList<Images> categories = new ArrayList<Images>();
 		for (Class clazz : classes) {
-			categories.add(instantiateImages(clazz));	// On instance chaque classe en objet de type Images qu'on rajoute dans notre liste
+			categories.add(instantiateImages(clazz));	// On instancie chaque classe en objet de type Images qu'on rajoute dans notre liste
 		}
 		
 		return categories;

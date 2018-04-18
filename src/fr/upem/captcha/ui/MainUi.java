@@ -174,7 +174,6 @@ public class MainUi {
 	private static boolean checkSelectedImages(Images category, ArrayList<URL> selectedImages, List<URL> correctImages) {
 		// D'abord on vérifie si la liste contient toutes les images correct
 		if (selectedImages.containsAll(correctImages)) {
-			System.out.println("OKAY");
 			// Ensuite on veut vérifier qu'il n'y ait pas de mauvaises images sélectionnées
 			for (URL imageURL : selectedImages) {
 				if(!category.isPhotoCorrect(imageURL)) return false;	// Si une seule image est fausse, alors le test est échoué
