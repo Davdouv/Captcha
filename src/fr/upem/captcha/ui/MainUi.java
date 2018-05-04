@@ -69,7 +69,7 @@ public class MainUi {
 		}
 		
 		JTextArea textArea = new JTextArea("Cliquez sur les images de " + grid.getCategory().getClass().getSimpleName());
-		textArea.setFont(new Font("Serif", Font.PLAIN, 30));
+		textArea.setFont(new Font("Sans-serif", Font.PLAIN, 30));
 		textArea.setLineWrap(true);
 		textArea.setWrapStyleWord(true);
 			
