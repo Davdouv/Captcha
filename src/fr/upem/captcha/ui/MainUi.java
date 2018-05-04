@@ -33,7 +33,7 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JTextArea;
 
-import fr.upem.captacha.grid.Grid;
+import fr.upem.captcha.grid.Grid;
 import fr.upem.captcha.images.Images;
 import fr.upem.captcha.images.boisson.Boisson;
 import fr.upem.captcha.images.poulet.Poulet;

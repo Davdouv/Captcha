@@ -2,10 +2,10 @@
  * @authors : David NASR - Joris OEUVRAY
  * @date : 15 avr. 2018
  * @file : Grid.java
- * @package : fr.upem.captacha.grid
+ * @package : fr.upem.captcha.grid
  */
 
-package fr.upem.captacha.grid;
+package fr.upem.captcha.grid;
 
 import java.net.URL;
 import java.util.ArrayList;
@@ -84,6 +84,19 @@ public class Grid {
 		Class boisson = Class.forName("fr.upem.captcha.images.boisson.Boisson");
 		classes.add(boisson);
 
+	    for(Package p : Package.getPackages()) {
+	    	String packageName = p.getName();
+	    	if (packageName.startsWith("fr.upem.captcha.images.")) {
+	    		System.out.println(p.getName());
+	    		String className = packageName.substring(packageName.lastIndexOf(".")+1);
+	    		String upClassName = className.substring(0, 1).toUpperCase() + className.substring(1);
+	    		String fullName = packageName+"."+upClassName;
+	    		System.out.println(fullName);
+	    		Class clazz = Class.forName(fullName);
+	    		System.out.println(clazz.getName());
+	    		//classes.add(clazz);
+	         }
+	    }
 		System.out.println(Images.class.getDeclaredClasses().length);
 		
 		ArrayList<Images> categories = new ArrayList<Images>();

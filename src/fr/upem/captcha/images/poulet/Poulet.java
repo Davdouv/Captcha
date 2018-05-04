@@ -7,9 +7,14 @@
 
 package fr.upem.captcha.images.poulet;
 
+import java.io.IOException;
 import java.net.URL;
 import java.util.List;
 import java.util.Random;
+import java.util.stream.Collectors;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 import fr.upem.captcha.images.Images;
 
@@ -21,7 +26,34 @@ public class Poulet implements Images {
 	// Piste d'amélioration -> Trouver un moyen de récupérer tous les fichiers (.jpg, .png ...) du dossier et de ses sous-dossiers
 	@Override
 	public List<URL> getPhotos() {
+		Path currentRelativePath = Paths.get("src/fr/upem/captcha/images/poulet");
+		String path = currentRelativePath.toAbsolutePath().toString();
+		//System.out.println(path);
+		List<String> jpgFileNames = null;
+		try {
+			jpgFileNames = Files.walk(Paths.get(path))
+			        .map(Path::getFileName)
+			        .map(Path::toString)
+			        .filter(n -> n.endsWith(".jpg"))
+			        .collect(Collectors.toList());
+			
+			System.out.println(Files.walk(Paths.get(path))
+			        .map(Path::getFileName)
+			        .map(Path::toString)
+			        .filter(n -> !n.contains("."))
+			        .collect(Collectors.toList()));
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		//System.out.println(jpgFileNames);
+		
 		List<URL> photos = new ArrayList<URL>();
+		for (String file : jpgFileNames) {
+			//System.out.println(file);
+			//photos.add(this.getClass().getResource(file));
+		}
+		
 		photos.add(this.getClass().getResource("poule.jpg"));
 		photos.add(this.getClass().getResource("poulet.jpg"));
 		photos.add(this.getClass().getResource("kfc.jpg"));
@@ -30,7 +62,7 @@ public class Poulet implements Images {
 		photos.add(this.getClass().getResource("mcchicken.jpg"));
 		photos.add(this.getClass().getResource("pouletCroustillant.jpg"));
 		photos.add(this.getClass().getResource("pouletRoti.jpg"));
-
+		
 		return photos;
 	}
 
