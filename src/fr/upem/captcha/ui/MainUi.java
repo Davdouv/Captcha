@@ -9,6 +9,7 @@ package fr.upem.captcha.ui;
 
 import java.awt.Color;
 import java.awt.EventQueue;
+import java.awt.Font;
 import java.awt.GridLayout;
 import java.awt.Image;
 import java.awt.event.ActionEvent;
@@ -47,7 +48,7 @@ public class MainUi {
 	//private static Images correctCategory;
 	//private static List<URL> correctImages = new ArrayList<URL>();
 	private static Grid grid = new Grid();
-	private final static int width = 800;
+	private final static int width = 600;
 	private final static int height = 600;
 	
 	public static void main(String[] args) throws IOException, ClassNotFoundException, InstantiationException, IllegalAccessException {
@@ -67,7 +68,12 @@ public class MainUi {
 			frame.add(createLabelImage(grid.getImages().get(i)));
 		}
 		
-		frame.add(new JTextArea("Cliquez sur les images de " + grid.getCategory().getClass().getSimpleName()));
+		JTextArea textArea = new JTextArea("Cliquez sur les images de " + grid.getCategory().getClass().getSimpleName());
+		textArea.setFont(new Font("Serif", Font.PLAIN, 30));
+		textArea.setLineWrap(true);
+		textArea.setWrapStyleWord(true);
+			
+		frame.add(textArea);
 		
 		frame.add(okButton);
 		
@@ -109,8 +115,12 @@ public class MainUi {
 		//System.out.println(url); 
 		
 		BufferedImage img = ImageIO.read(url); // Lire l'image
-		Image sImage = img.getScaledInstance(width/3,height/4, Image.SCALE_SMOOTH); // Redimensionner l'image
-		
+		Image sImage;
+			if(img.getWidth() > img.getHeight())  // Redimensionnement de l'image
+				sImage = img.getScaledInstance(-1, width/3, Image.SCALE_SMOOTH);
+			else
+				sImage = img.getScaledInstance(height/3, -1, Image.SCALE_SMOOTH);
+
 		final JLabel label = new JLabel(new ImageIcon(sImage)); // Créer le composant pour ajouter l'image dans la fen�tre
 		
 		label.addMouseListener(new MouseListener() { // Ajouter le listener d'évenement de souris

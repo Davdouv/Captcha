@@ -22,14 +22,11 @@ public class Boisson implements Images {
 	@Override
 	public List<URL> getPhotos() {
 		List<URL> photos = new ArrayList<URL>();
-		photos.add(this.getClass().getResource("cafe.jpg"));
-		photos.add(this.getClass().getResource("biere.jpg"));
-		photos.add(this.getClass().getResource("eau.jpg"));
-		photos.add(this.getClass().getResource("jusOrange.jpg"));
-		photos.add(this.getClass().getResource("lait.jpg"));
-		photos.add(this.getClass().getResource("oasis.jpg"));
-		photos.add(this.getClass().getResource("cocktail.jpg"));
-		photos.add(this.getClass().getResource("tea.jpg"));
+		
+		for(int i=1; i<8; i++) {
+			String s = "0" + i + ".jpg";
+			photos.add(this.getClass().getResource(s));
+		}
 
 		return photos;
 	}
@@ -48,7 +45,7 @@ public class Boisson implements Images {
 			throw new IllegalArgumentException("Il n'y a aucune photo pour cette classe");
 		}
 		else if (value > photos.size()) {
-			throw new IllegalArgumentException("La valeur doit être inférieure à " + photos.size());
+			throw new IllegalArgumentException("La valeur doit ï¿½tre infï¿½rieure ï¿½ " + photos.size());
 		}
 		
 		int randomNumber;

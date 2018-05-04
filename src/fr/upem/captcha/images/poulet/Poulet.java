@@ -20,10 +20,10 @@ import fr.upem.captcha.images.Images;
 
 import java.util.ArrayList;
 
-// Piste d'amélioration -> Trouver un moyen pour factoriser le code (Si Images était une classe abstraite ça aurait été cool...) car c'est le même dans chaque classe
+// Piste d'amï¿½lioration -> Trouver un moyen pour factoriser le code (Si Images ï¿½tait une classe abstraite ï¿½a aurait ï¿½tï¿½ cool...) car c'est le mï¿½me dans chaque classe
 public class Poulet implements Images {
 	
-	// Piste d'amélioration -> Trouver un moyen de récupérer tous les fichiers (.jpg, .png ...) du dossier et de ses sous-dossiers
+	// Piste d'amï¿½lioration -> Trouver un moyen de rï¿½cupï¿½rer tous les fichiers (.jpg, .png ...) du dossier et de ses sous-dossiers
 	@Override
 	public List<URL> getPhotos() {
 		Path currentRelativePath = Paths.get("src/fr/upem/captcha/images/poulet");
@@ -54,14 +54,10 @@ public class Poulet implements Images {
 			//photos.add(this.getClass().getResource(file));
 		}
 		
-		photos.add(this.getClass().getResource("poule.jpg"));
-		photos.add(this.getClass().getResource("poulet.jpg"));
-		photos.add(this.getClass().getResource("kfc.jpg"));
-		photos.add(this.getClass().getResource("lospollos.jpg"));
-		photos.add(this.getClass().getResource("nuggets.jpg"));
-		photos.add(this.getClass().getResource("mcchicken.jpg"));
-		photos.add(this.getClass().getResource("pouletCroustillant.jpg"));
-		photos.add(this.getClass().getResource("pouletRoti.jpg"));
+		for(int i=1; i<8; i++) {
+			String s = "0" + i + ".jpg";
+			photos.add(this.getClass().getResource(s));
+		}
 		
 		return photos;
 	}
@@ -77,7 +73,7 @@ public class Poulet implements Images {
 			throw new IllegalArgumentException("Il n'y a aucune photo pour cette classe");
 		}
 		else if (value > photos.size()) {
-			throw new IllegalArgumentException("La valeur doit être inférieure à " + photos.size());
+			throw new IllegalArgumentException("La valeur doit ï¿½tre infï¿½rieure ï¿½ " + photos.size());
 		}
 		
 		int randomNumber;
