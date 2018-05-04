@@ -83,7 +83,10 @@ public class Grid {
 		classes.add(poulet);
 		Class boisson = Class.forName("fr.upem.captcha.images.boisson.Boisson");
 		classes.add(boisson);
-
+		
+		System.out.println(Images.class.getResource("Images.class"));
+		System.out.println(Images.class.getClassLoader().getResource("Images.class"));
+		
 	    for(Package p : Package.getPackages()) {
 	    	String packageName = p.getName();
 	    	if (packageName.startsWith("fr.upem.captcha.images.")) {
@@ -91,13 +94,12 @@ public class Grid {
 	    		String className = packageName.substring(packageName.lastIndexOf(".")+1);
 	    		String upClassName = className.substring(0, 1).toUpperCase() + className.substring(1);
 	    		String fullName = packageName+"."+upClassName;
-	    		System.out.println(fullName);
+	    		System.err.println(fullName);
 	    		Class clazz = Class.forName(fullName);
-	    		System.out.println(clazz.getName());
+	    		System.err.println(clazz.getName());
 	    		//classes.add(clazz);
 	         }
 	    }
-		System.out.println(Images.class.getDeclaredClasses().length);
 		
 		ArrayList<Images> categories = new ArrayList<Images>();
 		for (Class clazz : classes) {

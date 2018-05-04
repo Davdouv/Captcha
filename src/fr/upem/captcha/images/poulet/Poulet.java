@@ -7,7 +7,9 @@
 
 package fr.upem.captcha.images.poulet;
 
+import java.io.File;
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.List;
 import java.util.Random;
@@ -16,12 +18,13 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-import fr.upem.captcha.images.Images;
+import fr.upem.captcha.images.Categorie;
 
 import java.util.ArrayList;
+import java.util.Enumeration;
 
 // Piste d'amélioration -> Trouver un moyen pour factoriser le code (Si Images était une classe abstraite ça aurait été cool...) car c'est le même dans chaque classe
-public class Poulet implements Images {
+public class Poulet extends Categorie {
 	
 	// Piste d'amélioration -> Trouver un moyen de récupérer tous les fichiers (.jpg, .png ...) du dossier et de ses sous-dossiers
 	@Override
@@ -63,45 +66,23 @@ public class Poulet implements Images {
 		photos.add(this.getClass().getResource("pouletCroustillant.jpg"));
 		photos.add(this.getClass().getResource("pouletRoti.jpg"));
 		
+		System.out.println("ok : " + getClass().getResource("poule.jpg"));
+		
+		try {
+			Enumeration<URL> en=getClass().getClassLoader().getResources("src/fr/upem/captcha/images/poulet");
+			System.out.println(en);
+			if (en.hasMoreElements()) {
+			    System.err.println("okokok");
+			}
+			else {
+				System.err.println("nononono");
+			}
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	
 		return photos;
-	}
-
-	@Override
-	public List<URL> getRandomPhotosURL(int value) throws IllegalArgumentException {
-		List<URL> photos = getPhotos();
-		List<URL> randomPhotos = new ArrayList<URL>();
-		Random randomGenerator = new Random();
-		List<Integer> randomNumbers = new ArrayList<Integer>();
-		
-		if (photos.size() == 0) {
-			throw new IllegalArgumentException("Il n'y a aucune photo pour cette classe");
-		}
-		else if (value > photos.size()) {
-			throw new IllegalArgumentException("La valeur doit être inférieure à " + photos.size());
-		}
-		
-		int randomNumber;
-		for (int i = 0; i < value; i++) {
-			do {
-				randomNumber = randomGenerator.nextInt(photos.size());
-			} while(randomNumbers.contains(randomNumber));
-			
-			randomNumbers.add(randomNumber);
-			randomPhotos.add(photos.get(randomNumber));
-		}
-		
-		return randomPhotos;
-	}
-
-	@Override
-	public URL getRandomPhotoURL() {
-		return getRandomPhotosURL(1).get(0);
-	}
-
-	@Override
-	public boolean isPhotoCorrect(URL url) {
-		String packageName = this.getClass().getPackage().getName();
-		return url.toString().replace('/', '.').contains(packageName);
 	}
 
 }
