@@ -9,6 +9,7 @@ package fr.upem.captcha.ui;
 
 import java.awt.Color;
 import java.awt.EventQueue;
+import java.awt.Font;
 import java.awt.GridLayout;
 import java.awt.Image;
 import java.awt.event.ActionEvent;
@@ -39,7 +40,7 @@ import fr.upem.captcha.images.boisson.Boisson;
 import fr.upem.captcha.images.poulet.Poulet;
 
 /**
- * MainUi est une classe qui permet la gestion et l'affichage de la fenêtre
+ * MainUi est une classe qui permet la gestion et l'affichage de la fenï¿½tre
  */
 public class MainUi {
 	
@@ -47,7 +48,7 @@ public class MainUi {
 	//private static Images correctCategory;
 	//private static List<URL> correctImages = new ArrayList<URL>();
 	private static Grid grid = new Grid();
-	private final static int width = 800;
+	private final static int width = 600;
 	private final static int height = 600;
 	
 	public static void main(String[] args) throws IOException, ClassNotFoundException, InstantiationException, IllegalAccessException {
@@ -67,7 +68,12 @@ public class MainUi {
 			frame.add(createLabelImage(grid.getImages().get(i)));
 		}
 		
-		frame.add(new JTextArea("Cliquez sur les images de " + grid.getCategory().getClass().getSimpleName()));
+		JTextArea textArea = new JTextArea("Cliquez sur les images de " + grid.getCategory().getClass().getSimpleName());
+		textArea.setFont(new Font("Sans-serif", Font.PLAIN, 30));
+		textArea.setLineWrap(true);
+		textArea.setWrapStyleWord(true);
+			
+		frame.add(textArea);
 		
 		frame.add(okButton);
 		
@@ -91,8 +97,8 @@ public class MainUi {
 							System.out.println("C'est correct !");
 						}
 						else {
-							System.out.println("Tu es démasqué robot !");
-							// Demandé ici -> Relancer un test plus compliqué que le 1er
+							System.out.println("Tu es demasque robot !");
+							// Demande ici -> Relancer un test plus complique que le 1er
 							// restart();
 						}
 					}
@@ -109,8 +115,12 @@ public class MainUi {
 		//System.out.println(url); 
 		
 		BufferedImage img = ImageIO.read(url); // Lire l'image
-		Image sImage = img.getScaledInstance(width/3,height/4, Image.SCALE_SMOOTH); // Redimensionner l'image
-		
+		Image sImage;
+			if(img.getWidth() > img.getHeight())  // Redimensionnement de l'image
+				sImage = img.getScaledInstance(-1, width/3, Image.SCALE_SMOOTH);
+			else
+				sImage = img.getScaledInstance(height/3, -1, Image.SCALE_SMOOTH);
+
 		final JLabel label = new JLabel(new ImageIcon(sImage)); // CrÃ©er le composant pour ajouter l'image dans la fenï¿½tre
 		
 		label.addMouseListener(new MouseListener() { // Ajouter le listener d'Ã©venement de souris
@@ -163,29 +173,29 @@ public class MainUi {
 	}
 		
 	/**
-	 * Vérifie si toutes les images correctes ont été sélectionnés (et seulement elles)
+	 * Vï¿½rifie si toutes les images correctes ont ï¿½tï¿½ sï¿½lectionnï¿½s (et seulement elles)
 	 * 
 	 * @param 
-	 * 		category - La bonne catégorie
-	 * 		selectedImages - La liste des URL des images sélectionnées
+	 * 		category - La bonne catï¿½gorie
+	 * 		selectedImages - La liste des URL des images sï¿½lectionnï¿½es
 	 * 		correctImages - La liste des URL des images correctes
 	 * @return boolean - Retourne true si toutes les images sont correctes, sinon false
 	 */
 	private static boolean checkSelectedImages(Images category, ArrayList<URL> selectedImages, List<URL> correctImages) {
-		// D'abord on vérifie si la liste contient toutes les images correct
+		// D'abord on vï¿½rifie si la liste contient toutes les images correct
 		if (selectedImages.containsAll(correctImages)) {
-			// Ensuite on veut vérifier qu'il n'y ait pas de mauvaises images sélectionnées
+			// Ensuite on veut vï¿½rifier qu'il n'y ait pas de mauvaises images sï¿½lectionnï¿½es
 			for (URL imageURL : selectedImages) {
-				if(!category.isPhotoCorrect(imageURL)) return false;	// Si une seule image est fausse, alors le test est échoué
+				if(!category.isPhotoCorrect(imageURL)) return false;	// Si une seule image est fausse, alors le test est ï¿½chouï¿½
 			}
 			
 			return true;			
 		}
-		else {	// Si on n'a pas sélectionné toutes les images correctes, alors c'est forcément faux
+		else {	// Si on n'a pas sï¿½lectionnï¿½ toutes les images correctes, alors c'est forcï¿½ment faux
 			return false;
 		}
 		
-		// Une autre méthode serait de parcourir toutes les images et d'utiliser la méthode isPhotoCorrect sur les images sélectionnées
+		// Une autre mï¿½thode serait de parcourir toutes les images et d'utiliser la mï¿½thode isPhotoCorrect sur les images sï¿½lectionnï¿½es
 		// Ainsi, pas besoin de stocker les images correctes
 	}
 	

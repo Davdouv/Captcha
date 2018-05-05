@@ -23,10 +23,15 @@ import fr.upem.captcha.images.Categorie;
 import java.util.ArrayList;
 import java.util.Enumeration;
 
+<<<<<<< HEAD
 // Piste d'amélioration -> Trouver un moyen pour factoriser le code (Si Images était une classe abstraite ça aurait été cool...) car c'est le même dans chaque classe
 public class Poulet extends Categorie {
+=======
+// Piste d'amï¿½lioration -> Trouver un moyen pour factoriser le code (Si Images ï¿½tait une classe abstraite ï¿½a aurait ï¿½tï¿½ cool...) car c'est le mï¿½me dans chaque classe
+public class Poulet implements Images {
+>>>>>>> f3772409dba4760c28da8914dde22637ff7283ae
 	
-	// Piste d'amélioration -> Trouver un moyen de récupérer tous les fichiers (.jpg, .png ...) du dossier et de ses sous-dossiers
+	// Piste d'amï¿½lioration -> Trouver un moyen de rï¿½cupï¿½rer tous les fichiers (.jpg, .png ...) du dossier et de ses sous-dossiers
 	@Override
 	public List<URL> getPhotos() {
 		Path currentRelativePath = Paths.get("src/fr/upem/captcha/images/poulet");
@@ -57,17 +62,14 @@ public class Poulet extends Categorie {
 			//photos.add(this.getClass().getResource(file));
 		}
 		
-		photos.add(this.getClass().getResource("poule.jpg"));
-		photos.add(this.getClass().getResource("poulet.jpg"));
-		photos.add(this.getClass().getResource("kfc.jpg"));
-		photos.add(this.getClass().getResource("lospollos.jpg"));
-		photos.add(this.getClass().getResource("nuggets.jpg"));
-		photos.add(this.getClass().getResource("mcchicken.jpg"));
-		photos.add(this.getClass().getResource("pouletCroustillant.jpg"));
-		photos.add(this.getClass().getResource("pouletRoti.jpg"));
+		for(int i=1; i<8; i++) {
+			String s = "0" + i + ".jpg";
+			photos.add(this.getClass().getResource(s));
+		}
 		
 		System.out.println("ok : " + getClass().getResource("poule.jpg"));
 		
+<<<<<<< HEAD
 		try {
 			Enumeration<URL> en=getClass().getClassLoader().getResources("src/fr/upem/captcha/images/poulet");
 			System.out.println(en);
@@ -80,6 +82,23 @@ public class Poulet extends Categorie {
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+=======
+		if (photos.size() == 0) {
+			throw new IllegalArgumentException("Il n'y a aucune photo pour cette classe");
+		}
+		else if (value > photos.size()) {
+			throw new IllegalArgumentException("La valeur doit ï¿½tre infï¿½rieure ï¿½ " + photos.size());
+		}
+		
+		int randomNumber;
+		for (int i = 0; i < value; i++) {
+			do {
+				randomNumber = randomGenerator.nextInt(photos.size());
+			} while(randomNumbers.contains(randomNumber));
+			
+			randomNumbers.add(randomNumber);
+			randomPhotos.add(photos.get(randomNumber));
+>>>>>>> f3772409dba4760c28da8914dde22637ff7283ae
 		}
 	
 		return photos;

@@ -22,15 +22,63 @@ public class Boisson extends Categorie {
 	@Override
 	public List<URL> getPhotos() {
 		List<URL> photos = new ArrayList<URL>();
-		photos.add(this.getClass().getResource("cafe.jpg"));
-		photos.add(this.getClass().getResource("biere.jpg"));
-		photos.add(this.getClass().getResource("eau.jpg"));
-		photos.add(this.getClass().getResource("jusOrange.jpg"));
-		photos.add(this.getClass().getResource("lait.jpg"));
-		photos.add(this.getClass().getResource("oasis.jpg"));
-		photos.add(this.getClass().getResource("cocktail.jpg"));
-		photos.add(this.getClass().getResource("tea.jpg"));
+		
+		for(int i=1; i<8; i++) {
+			String s = "0" + i + ".jpg";
+			photos.add(this.getClass().getResource(s));
+		}
 
 		return photos;
 	}
+<<<<<<< HEAD
+=======
+
+	/* (non-Javadoc)
+	 * @see fr.upem.captcha.images.Images#getRandomPhotosURL(int)
+	 */
+	@Override
+	public List<URL> getRandomPhotosURL(int value) throws IllegalArgumentException {
+		List<URL> photos = getPhotos();
+		List<URL> randomPhotos = new ArrayList<URL>();
+		Random randomGenerator = new Random();
+		List<Integer> randomNumbers = new ArrayList<Integer>();
+		
+		if (photos.size() == 0) {
+			throw new IllegalArgumentException("Il n'y a aucune photo pour cette classe");
+		}
+		else if (value > photos.size()) {
+			throw new IllegalArgumentException("La valeur doit �tre inf�rieure � " + photos.size());
+		}
+		
+		int randomNumber;
+		for (int i = 0; i < value; i++) {
+			do {
+				randomNumber = randomGenerator.nextInt(photos.size());
+			} while(randomNumbers.contains(randomNumber));
+			
+			randomNumbers.add(randomNumber);
+			randomPhotos.add(photos.get(randomNumber));
+		}
+		
+		return randomPhotos;
+	}
+
+	/* (non-Javadoc)
+	 * @see fr.upem.captcha.images.Images#getRandomPhotoURL()
+	 */
+	@Override
+	public URL getRandomPhotoURL() {
+		return getRandomPhotosURL(1).get(0);
+	}
+
+	/* (non-Javadoc)
+	 * @see fr.upem.captcha.images.Images#isPhotoCorrect(java.net.URL)
+	 */
+	@Override
+	public boolean isPhotoCorrect(URL url) {
+		String packageName = this.getClass().getPackage().getName();
+		return url.toString().replace('/', '.').contains(packageName);
+	}
+
+>>>>>>> f3772409dba4760c28da8914dde22637ff7283ae
 }
