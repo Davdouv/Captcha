@@ -45,8 +45,6 @@ import fr.upem.captcha.images.poulet.Poulet;
 public class MainUi {
 	
 	private static ArrayList<URL> selectedImages = new ArrayList<URL>();
-	//private static Images correctCategory;
-	//private static List<URL> correctImages = new ArrayList<URL>();
 	private static Grid grid = new Grid();
 	private final static int width = 600;
 	private final static int height = 600;
@@ -62,20 +60,26 @@ public class MainUi {
 		
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); // Lorsque l'on ferme la fenÃªtre on quitte le programme.
 		 
-		JButton okButton = createOkButton();
 
-		for(int i = 0; i < 9; i++) {
-			frame.add(createLabelImage(grid.getImages().get(i)));
-		}
-		
 		JTextArea textArea = new JTextArea("Cliquez sur les images de " + grid.getCategory().getClass().getSimpleName());
 		textArea.setFont(new Font("Sans-serif", Font.PLAIN, 30));
 		textArea.setLineWrap(true);
 		textArea.setWrapStyleWord(true);
+		
+		JTextArea textAreaResult = new JTextArea("");
+		textAreaResult.setFont(new Font("Sans-serif", Font.PLAIN, 30));
+		textAreaResult.setLineWrap(true);
+		textAreaResult.setWrapStyleWord(true);
+		
+		JButton okButton = createOkButton(textAreaResult);
 			
+		for(int i = 0; i < 9; i++) {
+			frame.add(createLabelImage(grid.getImages().get(i)));
+		}
 		frame.add(textArea);
 		
 		frame.add(okButton);
+		frame.add(textAreaResult);
 		
 		frame.setVisible(true);
 	}
@@ -84,7 +88,7 @@ public class MainUi {
 		return new GridLayout(4,3);
 	}
 	
-	private static JButton createOkButton(){
+	private static JButton createOkButton(JTextArea result){
 		return new JButton(new AbstractAction("VÃ©rifier") { // Ajouter l'action du bouton
 			
 			@Override
@@ -95,8 +99,12 @@ public class MainUi {
 					public void run() { // c'est un runnable
 						if (checkSelectedImages(grid.getCategory(), selectedImages, grid.getCorrectImages())) {
 							System.out.println("C'est correct !");
+							result.setText("Bien ouèj !");
+							result.setBackground(Color.GREEN);
 						}
 						else {
+							result.setText("Râté !");
+							result.setBackground(Color.RED);
 							System.out.println("Tu es demasque robot !");
 							// Demande ici -> Relancer un test plus complique que le 1er
 							// restart();

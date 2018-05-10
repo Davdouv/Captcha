@@ -7,11 +7,18 @@
 
 package fr.upem.captcha.grid;
 
+import java.io.File;
+import java.io.IOException;
 import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Enumeration;
 import java.util.List;
 import java.util.Random;
+import java.util.stream.Collectors;
 
 import fr.upem.captcha.images.Images;
 import fr.upem.captcha.images.boisson.Boisson;
@@ -76,34 +83,29 @@ public class Grid {
 	 */
 	public static ArrayList<Images> getCategories() throws ClassNotFoundException, InstantiationException, IllegalAccessException {
 		ArrayList<Class<?>> classes = new ArrayList<Class<?>>(); 		// une liste de toutes nos classes
-		//classes.add(Poulet.class);	// on rajoute manuellement toutes nos classes
-		//classes.add(Boisson.class);		
-		
-		Class poulet = Class.forName("fr.upem.captcha.images.poulet.Poulet");
-		classes.add(poulet);
-		Class boisson = Class.forName("fr.upem.captcha.images.boisson.Boisson");
-		classes.add(boisson);
-		
-		System.out.println(Images.class.getResource("Images.class"));
-		System.out.println(Images.class.getClassLoader().getResource("Images.class"));
+		classes.add(Poulet.class);	// on rajoute manuellement toutes nos classes
+		classes.add(Boisson.class);		
+
+		// TEST Méthode, ne fonctionne pas car les classes ne sont pas chargées, mais on ne veut pas les charger manuellement
+	/*
+		Images.class.getClassLoader().loadClass("fr.upem.captcha.images.poulet.Poulet");
+		Images.class.getClassLoader().loadClass("fr.upem.captcha.images.boisson.Boisson");
 		
 	    for(Package p : Package.getPackages()) {
 	    	String packageName = p.getName();
 	    	if (packageName.startsWith("fr.upem.captcha.images.")) {
-	    		System.out.println(p.getName());
 	    		String className = packageName.substring(packageName.lastIndexOf(".")+1);
 	    		String upClassName = className.substring(0, 1).toUpperCase() + className.substring(1);
 	    		String fullName = packageName+"."+upClassName;
-	    		System.err.println(fullName);
 	    		Class clazz = Class.forName(fullName);
-	    		System.err.println(clazz.getName());
-	    		//classes.add(clazz);
+	    		classes.add(clazz);
 	         }
 	    }
-		
+	*/
+		// On instancie chaque classe en objet de type Images qu'on rajoute dans notre liste
 		ArrayList<Images> categories = new ArrayList<Images>();
 		for (Class clazz : classes) {
-			categories.add(instantiateImages(clazz));	// On instancie chaque classe en objet de type Images qu'on rajoute dans notre liste
+			categories.add(instantiateImages(clazz));
 		}
 		
 		return categories;
