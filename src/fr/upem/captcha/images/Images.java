@@ -49,4 +49,11 @@ public interface Images {
 	 * @return boolean - Retourne un boolean
 	 */
 	public boolean isPhotoCorrect(URL url);
+	
+	/**
+	 * Renvoie une sous-catégorie
+	 * 
+	 * @return Images - La nouvelle classe
+	 */
+	//public Images getSubCategory();
 }

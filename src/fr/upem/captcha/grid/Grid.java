@@ -34,27 +34,34 @@ public class Grid {
 	private Images correctCategory;
 	private List<URL> correctImages = new ArrayList<URL>();
 	private ArrayList<URL> allImages = new ArrayList<URL>();
+	private ArrayList<String> categorieNames = new ArrayList<String>();
 	
 	/**
 	 * Constructeur par défaut de Grid.
 	 * Fais appel à ses méthodes pour initialiser ses variables (catégorie et photos aléatoires)
 	 */
 	public Grid() {
+		// On fixe la premiere categorie à images, le point de départ
+		this.categorieNames.add("images");
+		
+		this.buildGrid();
+	}
+	
+	public void buildGrid() {
 		ArrayList<Images> categories = null;
 		try {
-			categories = getCategories();	// On récupére les différentes classes
+			categories = getCategories(categorieNames);	// On récupére les différentes classes
 		} catch (ClassNotFoundException | InstantiationException | IllegalAccessException e) {
 			e.printStackTrace();
 		}
 		try {
-			correctCategory = getRandomCategory(categories);	// On récupére une classe au hasard
+			correctCategory = getRandomCategory(categories, categorieNames);	// On récupére une classe au hasard
 		} catch (ClassNotFoundException | InstantiationException | IllegalAccessException e) {
 			e.printStackTrace();
 		}
 		
-		// Récupére une catégorie au hasard
 		Random randomGenerator = new Random();
-		int randomNumber = randomGenerator.nextInt(4)+1;	// Renvoie un nombre entre 1 et 4
+		int randomNumber = randomGenerator.nextInt(4)+1;	// Renvoie un nombre entre 1 et 4 (le nombre de bonnes images possibles)
 		
 		correctImages = correctCategory.getRandomPhotosURL(randomNumber);	// Renvoie un nombre aléatoire d'images de la catégorie
 		List<URL> wrongImages = getOtherCategoryPhotos(categories, correctCategory, randomNumber);
@@ -73,35 +80,81 @@ public class Grid {
 	public ArrayList<URL> getImages() {
 		return allImages;
 	}
+	public String getCategoryName() {
+		StringBuilder categoryName = new StringBuilder();
+		for(int i = 1; i < categorieNames.size(); i++) {
+			categoryName.append(" ").append(categorieNames.get(i));
+		}
+		return categoryName.toString();
+	}
 	
+	/**
+	 * Renvoie un String contenant le chemin vers la catégorie actuelle
+	 * 
+	 * @param ArrayList<String> - La liste des categories visitées
+	 * @return String - Le chemin vers la catégorie actuelle
+	 */
+	private static String getCurrentPath(ArrayList<String> categorieNames) {
+		//StringBuilder fullPath = new StringBuilder("src/fr/upem/captcha");	// Chemin pour exécuter à partir d'Eclipse
+		StringBuilder fullPath = new StringBuilder("../src/fr/upem/captcha");	// Chemin pour exécuter en ligne de commandes depuis le dossier bin
+		for(String categorie: categorieNames) {
+			fullPath.append("/").append(categorie);
+		}
+		return fullPath.toString();
+	}
 	
-	// Piste d'amélioration -> Trouver un moyen pour récupérer toutes les classes qui implémentent Images
+	/**
+	 * Renvoie un String contenant le chemin vers la catégorie actuelle
+	 * 
+	 * @param ArrayList<String> - La liste des categories visitées
+	 * @return String - Le chemin vers la catégorie actuelle
+	 */
+	private static ArrayList<String> getClassPath(ArrayList<String> categorieNames, List<String> categories) {
+		StringBuilder fullPath = new StringBuilder("fr.upem.captcha");
+		for(String categorie: categorieNames) {
+			fullPath.append(".").append(categorie);
+		}
+		ArrayList<String> classPath = new ArrayList<String>();
+		for(String categorie: categories) {
+			String className = categorie.substring(0, 1).toUpperCase() + categorie.substring(1);
+			String fullName = fullPath+"."+categorie+"."+className;
+			classPath.add(fullName);
+		}
+		return classPath;
+	}
+
 	/**
 	 * Retourne la liste des catégories existantes
 	 * 
 	 * @return ArrayList<Images> - La liste des classes existantes implémentant l'interface Images
 	 */
-	public static ArrayList<Images> getCategories() throws ClassNotFoundException, InstantiationException, IllegalAccessException {
+	public static ArrayList<Images> getCategories(ArrayList<String> categorieNames) throws ClassNotFoundException, InstantiationException, IllegalAccessException {
 		ArrayList<Class<?>> classes = new ArrayList<Class<?>>(); 		// une liste de toutes nos classes
-		classes.add(Poulet.class);	// on rajoute manuellement toutes nos classes
-		classes.add(Boisson.class);		
-
-		// TEST Méthode, ne fonctionne pas car les classes ne sont pas chargées, mais on ne veut pas les charger manuellement
-	/*
-		Images.class.getClassLoader().loadClass("fr.upem.captcha.images.poulet.Poulet");
-		Images.class.getClassLoader().loadClass("fr.upem.captcha.images.boisson.Boisson");
 		
-	    for(Package p : Package.getPackages()) {
-	    	String packageName = p.getName();
-	    	if (packageName.startsWith("fr.upem.captcha.images.")) {
-	    		String className = packageName.substring(packageName.lastIndexOf(".")+1);
-	    		String upClassName = className.substring(0, 1).toUpperCase() + className.substring(1);
-	    		String fullName = packageName+"."+upClassName;
-	    		Class clazz = Class.forName(fullName);
-	    		classes.add(clazz);
-	         }
-	    }
-	*/
+		// On récupére le dossier dans lequel on se trouve actuellement
+		String currentPath = getCurrentPath(categorieNames);
+		Path currentRelativePath = Paths.get(currentPath);
+		
+		// On récupére les sous dossiers (c'est à dire les categories)
+		List<String> directories = null;
+		try {
+			directories = Files.walk(currentRelativePath, 1)
+			        .map(Path::getFileName)
+			        .map(Path::toString)
+			        .filter(n -> !n.contains("."))
+			        .collect(Collectors.toList());
+			directories.remove(0);	// On enléve le 0 car c'est le nom du dossier courant
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		// On récupére le nom des classes trouvées et on les rajoute à la liste
+		ArrayList<String> classPath = getClassPath(categorieNames, directories);
+		for (String s : classPath) {
+			classes.add(Class.forName(s));
+		}
+		
 		// On instancie chaque classe en objet de type Images qu'on rajoute dans notre liste
 		ArrayList<Images> categories = new ArrayList<Images>();
 		for (Class clazz : classes) {
@@ -117,10 +170,14 @@ public class Grid {
 	 * @param categories - La liste des categories existantes, à récupérer avec getCategories()
 	 * @return Images - Un objet de la catégorie qui implémente l'interface Images
 	 */
-	public static Images getRandomCategory(ArrayList<Images> categories) throws ClassNotFoundException, InstantiationException, IllegalAccessException {
+	public static Images getRandomCategory(ArrayList<Images> categories, ArrayList<String> categorieNames) throws ClassNotFoundException, InstantiationException, IllegalAccessException {
 		Random randomGenerator = new Random();
 		Images category = categories.get(randomGenerator.nextInt(categories.size()));	// on choisit aléatoirement une classe dans la liste
 
+		// On met la 1ere lettre en minuscule et on rajoute la categorie dans la liste des categories
+		String categoryName = category.getClass().getSimpleName();
+		String name = categoryName.substring(0,1).toLowerCase() + categoryName.substring(1);
+		categorieNames.add(name);	// on rajoute la nouvelle categorie dans la liste
 		return category;	// on renvoit la categorie
 	}
 	
@@ -164,10 +221,20 @@ public class Grid {
 	}
 	
 	/**
-	 * Restart ...
-	 * 
+	 * Restart, clear the image Array and build a new Grid from the previous category
 	 */
-	public static void restart() {
-		
+	public void restart() {
+		allImages.clear();
+		this.buildGrid();
+	}
+	
+	/**
+	 * Tell if the max difficulty is reached or not
+	 * 
+	 * @return boolean - true if difficulty max is reached (2)
+	 */
+	public boolean maxDifficultyReached() {
+		if(categorieNames.size() > 2) return true;
+		else return false;
 	}
 }

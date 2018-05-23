@@ -52,6 +52,20 @@ public class MainUi {
 	public static void main(String[] args) throws IOException, ClassNotFoundException, InstantiationException, IllegalAccessException {
 		JFrame frame = new JFrame("Captcha"); // CrÃ©ation de la fenÃªtre principale
 		
+		FillFrame(frame);
+	}
+
+	private static GridLayout createLayout(){
+		return new GridLayout(4,3);
+	}
+	
+	private static void CreateImages(JFrame frame) throws IOException {
+		for(int i = 0; i < 9; i++) {
+			frame.add(createLabelImage(grid.getImages().get(i)));
+		}
+	}
+	
+	private static void FillFrame(JFrame frame) throws IOException {
 		GridLayout layout = createLayout();  // CrÃ©ation d'un layout de type Grille avec 4 lignes et 3 colonnes
 		
 		frame.setLayout(layout);  // Affection du layout dans la fenÃªtre.
@@ -61,7 +75,7 @@ public class MainUi {
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); // Lorsque l'on ferme la fenÃªtre on quitte le programme.
 		 
 
-		JTextArea textArea = new JTextArea("Cliquez sur les images de " + grid.getCategory().getClass().getSimpleName());
+		JTextArea textArea = new JTextArea("Cliquez sur les images de" + grid.getCategoryName());
 		textArea.setFont(new Font("Sans-serif", Font.PLAIN, 30));
 		textArea.setLineWrap(true);
 		textArea.setWrapStyleWord(true);
@@ -71,11 +85,10 @@ public class MainUi {
 		textAreaResult.setLineWrap(true);
 		textAreaResult.setWrapStyleWord(true);
 		
-		JButton okButton = createOkButton(textAreaResult);
-			
-		for(int i = 0; i < 9; i++) {
-			frame.add(createLabelImage(grid.getImages().get(i)));
-		}
+		JButton okButton = createOkButton(frame, textAreaResult);
+		
+		CreateImages(frame);
+
 		frame.add(textArea);
 		
 		frame.add(okButton);
@@ -83,13 +96,9 @@ public class MainUi {
 		
 		frame.setVisible(true);
 	}
-
-	private static GridLayout createLayout(){
-		return new GridLayout(4,3);
-	}
 	
-	private static JButton createOkButton(JTextArea result){
-		return new JButton(new AbstractAction("VÃ©rifier") { // Ajouter l'action du bouton
+	private static JButton createOkButton(JFrame frame, JTextArea result){
+		return new JButton(new AbstractAction("Vérifier") { // Ajouter l'action du bouton
 			
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
@@ -98,16 +107,19 @@ public class MainUi {
 					@Override
 					public void run() { // c'est un runnable
 						if (checkSelectedImages(grid.getCategory(), selectedImages, grid.getCorrectImages())) {
-							System.out.println("C'est correct !");
-							result.setText("Bien ouèj !");
+							System.out.println(" C'est correct !");
+							result.setText(" Bien joué !");
 							result.setBackground(Color.GREEN);
 						}
 						else {
-							result.setText("Râté !");
-							result.setBackground(Color.RED);
-							System.out.println("Tu es demasque robot !");
-							// Demande ici -> Relancer un test plus complique que le 1er
-							// restart();
+							if (!grid.maxDifficultyReached()) {
+								restart(frame);
+							}
+							else {
+								result.setText(" Râté !");
+								result.setBackground(Color.RED);
+								System.out.println("Tu es demasque robot !");
+							}
 						}
 					}
 				});
@@ -211,9 +223,18 @@ public class MainUi {
 	 * Restart...
 	 * 
 	 */
-	private static void restart() {
+	private static void restart(JFrame frame) {
 		selectedImages.clear();
-		//frame.removeAll();
 		grid.restart();
+		frame.setVisible(false);
+		
+		frame = new JFrame("Captcha");
+		
+		try {
+			FillFrame(frame);
+		} catch (IOException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
 	}
 }

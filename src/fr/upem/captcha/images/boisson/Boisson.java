@@ -13,21 +13,9 @@ import java.util.List;
 import java.util.Random;
 
 import fr.upem.captcha.images.Categorie;
+import fr.upem.captcha.images.Images;
+import fr.upem.captcha.images.poulet.Poulet;
 
 public class Boisson extends Categorie {
 
-	/* (non-Javadoc)
-	 * @see fr.upem.captcha.images.Images#getPhotos()
-	 */
-	@Override
-	public List<URL> getPhotos() {
-		List<URL> photos = new ArrayList<URL>();
-		
-		for(int i=1; i<8; i++) {
-			String s = "0" + i + ".jpg";
-			photos.add(this.getClass().getResource(s));
-		}
-
-		return photos;
-	}
 }
